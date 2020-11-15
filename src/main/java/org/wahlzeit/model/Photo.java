@@ -103,7 +103,13 @@ public class Photo extends DataObject {
 	 * 
 	 */
 	protected long creationTime = System.currentTimeMillis();
-	
+
+	/**
+	 *	The position of a photo. Specified through a cartesian coordinate.
+	 *	Default is: x=0, y=0, z=0.
+	 */
+	protected Location location = Location.buildWithCartesianCoord(0.0, 0.0, 0.0);
+
 	/**
 	 * 
 	 */
@@ -163,6 +169,11 @@ public class Photo extends DataObject {
 
 		creationTime = rset.getLong("creation_time");
 
+		final double locationX = rset.getDouble("location_x");
+		final double locationY = rset.getDouble("location_y");
+		final double locationZ = rset.getDouble("location_z");
+		location.setCartCoordinate(locationX, locationY, locationZ);
+
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
 	}
 	
@@ -183,7 +194,10 @@ public class Photo extends DataObject {
 		rset.updateInt("status", status.asInt());
 		rset.updateInt("praise_sum", praiseSum);
 		rset.updateInt("no_votes", noVotes);
-		rset.updateLong("creation_time", creationTime);		
+		rset.updateLong("creation_time", creationTime);
+		rset.updateDouble("location_x", location.getCoordinate().getX());
+		rset.updateDouble("location_y", location.getCoordinate().getY());
+		rset.updateDouble("location_z", location.getCoordinate().getZ());
 	}
 
 	/**
