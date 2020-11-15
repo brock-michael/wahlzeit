@@ -11,7 +11,7 @@ public class Location {
         return new Location(new Coordinate(x, y, z));
     }
 
-    public Coordinate getCoordinate() {
+    public Coordinate getCartCoordinate() {
         return coordinate;
     }
 

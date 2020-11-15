@@ -14,6 +14,9 @@ public class Coordinate {
     }
 
     public double getDistance(final Coordinate other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cant be null");
+        }
         final double distX = this.x - other.x;
         final double distY = this.y - other.y;
         final double distZ = this.z - other.z;
