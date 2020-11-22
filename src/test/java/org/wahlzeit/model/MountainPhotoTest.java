@@ -61,8 +61,8 @@ class MountainPhotoTest {
 
         final MountainPhoto mountainPhoto = new MountainPhoto();
         mountainPhoto.ownerHomePage = new URL(MOCK_RS_OWNER_HOME_PAGE);
-        this.setPrivateMethod(mountainPhoto, "mountainHeight", MOCK_RS_MOUNTAIN_HEIGHT);
-        this.setPrivateMethod(mountainPhoto, "mountainLocation", MOCK_RS_MOUNTAIN_LOCATION);
+        this.setPrivateField(mountainPhoto, "mountainHeight", MOCK_RS_MOUNTAIN_HEIGHT);
+        this.setPrivateField(mountainPhoto, "mountainLocation", MOCK_RS_MOUNTAIN_LOCATION);
 
         mountainPhoto.writeOn(resultSetMock);
 
@@ -80,7 +80,7 @@ class MountainPhotoTest {
         return resultSetMock;
     }
 
-    private void setPrivateMethod(final Object object, final String name, final Object value)
+    private void setPrivateField(final Object object, final String name, final Object value)
             throws NoSuchFieldException, IllegalAccessException {
         final Field field = object.getClass().getDeclaredField(name);
         field.setAccessible(true);

@@ -29,7 +29,7 @@ class CoordinateTest {
         final Coordinate coord2 = new Coordinate(x2, y2, z2);
 
         final double calcDist1 = coord2.getDistance(coord1);
-        final double calcDist2 = coord2.getDistance(coord1);
+        final double calcDist2 = coord1.getDistance(coord2);
         final double realDist = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2) + Math.pow(z2-z1, 2));
 
         assertEquals(realDist, calcDist1);
