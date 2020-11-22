@@ -3,6 +3,8 @@ package org.wahlzeit.model;
 import java.util.Objects;
 
 public class Coordinate {
+    private static final double COMPARE_THRESHOLD = .0001;
+
     private double x;
     private double y;
     private double z;
@@ -26,9 +28,13 @@ public class Coordinate {
 
     public boolean isEqual(final Coordinate other) {
         return other != null &&
-                Double.compare(other.x, this.x) == 0 &&
-                Double.compare(other.y, this.y) == 0 &&
-                Double.compare(other.z, this.z) == 0;
+                this.compareDouble(other.x, this.x) &&
+                this.compareDouble(other.y, this.y) &&
+                this.compareDouble(other.z, this.z);
+    }
+
+    private boolean compareDouble(double d1, double d2) {
+        return Math.abs(d1 - d2) < COMPARE_THRESHOLD;
     }
 
     @Override
