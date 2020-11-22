@@ -95,7 +95,7 @@ public class PhotoManager extends ObjectManager {
 	 * 
 	 */
 	public static final Photo getPhoto(PhotoId id) {
-		return instance.getPhotoFromId(id);
+		return PhotoManager.getInstance().getPhotoFromId(id);
 	}
 	
 	/**
