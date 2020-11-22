@@ -4,7 +4,7 @@ on:
   push:
     # Publish `adap-cw*` tags as releases.
     tags:
-        - adap-hw*
+        - adap-cw*
 
 env:
   IMAGE_NAME: wahlzeit
