@@ -40,12 +40,12 @@ public class PhotoFactory {
 	public static synchronized PhotoFactory getInstance() {
 		if (instance == null) {
 			SysLog.logSysInfo("setting generic PhotoFactory");
-			setInstance(new PhotoFactory());
+			setInstance(new MountainPhotoFactory());
 		}
 		
 		return instance;
 	}
-	
+
 	/**
 	 * Method to set the singleton instance of PhotoFactory.
 	 */

@@ -35,7 +35,30 @@ public class PhotoManager extends ObjectManager {
 	/**
 	 * 
 	 */
-	protected static final PhotoManager instance = new PhotoManager();
+	protected static PhotoManager instance = null;
+
+	/**
+	 * Public singleton access method.
+	 */
+	public static synchronized PhotoManager getInstance() {
+		if (instance == null) {
+			SysLog.logSysInfo("setting generic PhotoManager");
+			setInstance(new MountainPhotoManager());
+		}
+
+		return instance;
+	}
+
+	/**
+	 * Method to set the singleton instance of PhotoFactory.
+	 */
+	protected static synchronized void setInstance(MountainPhotoManager photoManager) {
+		if (instance != null) {
+			throw new IllegalStateException("attempt to initialize PhotoFactory twice");
+		}
+
+		instance = photoManager;
+	}
 
 	/**
 	 * In-memory cache for photos
@@ -46,13 +69,6 @@ public class PhotoManager extends ObjectManager {
 	 * 
 	 */
 	protected PhotoTagCollector photoTagCollector = null;
-	
-	/**
-	 * 
-	 */
-	public static final PhotoManager getInstance() {
-		return instance;
-	}
 	
 	/**
 	 * 
