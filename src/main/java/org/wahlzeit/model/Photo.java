@@ -23,6 +23,7 @@ package org.wahlzeit.model;
 import java.sql.*;
 import java.net.*;
 
+import org.wahlzeit.model.location.Location;
 import org.wahlzeit.services.*;
 import org.wahlzeit.utils.*;
 
@@ -169,12 +170,11 @@ public class Photo extends DataObject {
 
 		creationTime = rset.getLong("creation_time");
 
-		final double locationX = rset.getDouble("location_x");
-		final double locationY = rset.getDouble("location_y");
-		final double locationZ = rset.getDouble("location_z");
-		location.setCartCoordinate(locationX, locationY, locationZ);
-
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
+
+		if (this.location != null) {
+			this.location.readFrom(rset);
+		}
 	}
 	
 	/**
@@ -195,9 +195,10 @@ public class Photo extends DataObject {
 		rset.updateInt("praise_sum", praiseSum);
 		rset.updateInt("no_votes", noVotes);
 		rset.updateLong("creation_time", creationTime);
-		rset.updateDouble("location_x", location.getCartCoordinate().getX());
-		rset.updateDouble("location_y", location.getCartCoordinate().getY());
-		rset.updateDouble("location_z", location.getCartCoordinate().getZ());
+
+		if (this.location != null) {
+			this.location.writeOn(rset);
+		}
 	}
 
 	/**

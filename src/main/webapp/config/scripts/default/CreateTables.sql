@@ -33,6 +33,9 @@ CREATE TABLE photos (
 	location_x double precision,
 	location_y double precision,
 	location_z double precision,
+    location_phi double precision,
+    location_theta double precision,
+    location_radius double precision,
     mountain_height integer,
     mountain_location text
 );
