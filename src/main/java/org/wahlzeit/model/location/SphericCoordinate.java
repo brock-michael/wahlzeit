@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
-public class SphericCoordinate implements Coordinate {
+public class SphericCoordinate extends AbstractCoordinate {
     private double phi;
     private double theta;
     private double radius;
@@ -24,24 +24,18 @@ public class SphericCoordinate implements Coordinate {
     }
 
     @Override
-    public double getCartesianDistance(final Coordinate other) {
-        final Coordinate cartesianCoord1 = this.asCartesianCoordinate();
-        final Coordinate cartesianCoord2 = other.asCartesianCoordinate();
-        return cartesianCoord1.getCartesianDistance(cartesianCoord2);
-    }
-
-    @Override
     public SphericCoordinate asSphericCoordinate() {
         return this;
     }
 
     @Override
     public double getCentralAngle(final Coordinate other) {
+        final SphericCoordinate thisAsSpheric = this.asSphericCoordinate();
         final SphericCoordinate otherAsSpheric = other.asSphericCoordinate();
 
-        final double sin = Math.sin(this.phi) * Math.sin(otherAsSpheric.phi);
-        final double deltaTheta = Math.abs(otherAsSpheric.theta-this.theta);
-        final double cos = Math.cos(this.phi) * Math.cos(otherAsSpheric.phi) * Math.cos(deltaTheta);
+        final double sin = Math.sin(thisAsSpheric.getPhi()) * Math.sin(otherAsSpheric.getPhi());
+        final double deltaTheta = Math.abs(otherAsSpheric.getTheta()-thisAsSpheric.getTheta());
+        final double cos = Math.cos(thisAsSpheric.getPhi()) * Math.cos(otherAsSpheric.getPhi()) * Math.cos(deltaTheta);
         return Math.acos(sin + cos);
     }
 
@@ -55,10 +49,6 @@ public class SphericCoordinate implements Coordinate {
         return  this.compareDouble(cart.phi, this.phi) &&
                 this.compareDouble(cart.theta, this.theta) &&
                 this.compareDouble(cart.radius, this.radius);
-    }
-
-    private boolean compareDouble(final double d1, final double d2) {
-        return Math.abs(d1 - d2) < COMPARE_THRESHOLD;
     }
 
     @Override

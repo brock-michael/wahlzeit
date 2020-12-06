@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
-public class CartesianCoordinate implements Coordinate {
+public class CartesianCoordinate extends AbstractCoordinate {
     private double x;
     private double y;
     private double z;
@@ -21,21 +21,12 @@ public class CartesianCoordinate implements Coordinate {
     }
 
     @Override
-    public double getCartesianDistance(final Coordinate other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cant be null");
+    public SphericCoordinate asSphericCoordinate() {
+        final boolean origin = this.x == 0 && this.y == 0 && this.z == 0;
+        if (origin) {
+            return new SphericCoordinate(0, 0, 0);
         }
 
-        final CartesianCoordinate otherAsCart = other.asCartesianCoordinate();
-        final double distX = this.x - otherAsCart.x;
-        final double distY = this.y - otherAsCart.y;
-        final double distZ = this.z - otherAsCart.z;
-
-        return Math.sqrt((distX*distX) + (distY*distY) + (distZ*distZ));
-    }
-
-    @Override
-    public SphericCoordinate asSphericCoordinate() {
         final double radius = Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
         final double phi = Math.atan2(this.y, this.x);
         final double theta = Math.acos(this.z / radius);
@@ -44,10 +35,17 @@ public class CartesianCoordinate implements Coordinate {
     }
 
     @Override
-    public double getCentralAngle(final Coordinate other) {
-        final Coordinate sphericCoord1 = this.asSphericCoordinate();
-        final Coordinate sphericCoord2 = other.asSphericCoordinate();
-        return sphericCoord1.getCentralAngle(sphericCoord2);
+    public double getCartesianDistance(final Coordinate other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cant be null");
+        }
+
+        final CartesianCoordinate otherAsCart = other.asCartesianCoordinate();
+        final double distX = this.getX() - otherAsCart.getX();
+        final double distY = this.getY() - otherAsCart.getY();
+        final double distZ = this.getZ() - otherAsCart.getZ();
+
+        return Math.sqrt((distX*distX) + (distY*distY) + (distZ*distZ));
     }
 
     @Override
@@ -60,10 +58,6 @@ public class CartesianCoordinate implements Coordinate {
         return  this.compareDouble(cart.x, this.x) &&
                 this.compareDouble(cart.y, this.y) &&
                 this.compareDouble(cart.z, this.z);
-    }
-
-    private boolean compareDouble(final double d1, final double d2) {
-        return Math.abs(d1 - d2) < COMPARE_THRESHOLD;
     }
 
     @Override
