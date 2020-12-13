@@ -8,6 +8,32 @@ class SphericCoordinateTest {
     private static final double DOUBLE_COMPARE_DELTA = 0.0001;
 
     @Test
+    public void testInitWithInvalidParam() throws Exception {
+        SphericCoordinate coord = null;
+
+        try {
+            coord = new SphericCoordinate(Double.NaN, Double.NaN, Double.NaN);
+            throw new Exception("That shouldnt have happened :(");
+        } catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "Double value has to be a number");
+            assertNull(coord);
+        }
+    }
+
+    @Test
+    public void testInitWithNegativeRadius() throws Exception {
+        SphericCoordinate coord = null;
+
+        try {
+            coord = new SphericCoordinate(5, 5, -5);
+            throw new Exception("That shouldnt have happened :(");
+        } catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "Value can not be negative");
+            assertNull(coord);
+        }
+    }
+
+    @Test
     public void testAsCartesianCoordinate() {
         final double phi = 60 * Math.PI/180;
         final double theta = 120 * Math.PI/180;

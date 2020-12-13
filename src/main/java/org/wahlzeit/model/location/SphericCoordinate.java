@@ -10,13 +10,34 @@ public class SphericCoordinate extends AbstractCoordinate {
     private double radius;
 
     public SphericCoordinate(final double phi, final double theta, final double radius) {
+        AssertionUtils.assertMultibleDouble(phi, theta, radius);
+        AssertionUtils.assertNotNegative(radius);
         this.phi = phi;
         this.theta = theta;
         this.radius = radius;
+        this.assertClassInvariants();
+    }
+
+    @Override
+    protected void assertClassInvariants() {
+        AssertionUtils.assertDouble(this.phi);
+        AssertionUtils.assertDouble(this.theta);
+        AssertionUtils.assertDouble(this.radius);
+        AssertionUtils.assertNotNegative(this.radius);
     }
 
     @Override
     public CartesianCoordinate asCartesianCoordinate() {
+        this.assertClassInvariants();
+
+        final CartesianCoordinate cartesianCoordinate = this.doConvertToCartesianCoordinate();
+
+        AssertionUtils.assertValidCoordinate(cartesianCoordinate);
+        this.assertClassInvariants();
+        return cartesianCoordinate;
+    }
+
+    private CartesianCoordinate doConvertToCartesianCoordinate() {
         final double x = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
         final double y = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
         final double z = this.radius * Math.cos(this.theta);
@@ -30,47 +51,44 @@ public class SphericCoordinate extends AbstractCoordinate {
 
     @Override
     public double getCentralAngle(final Coordinate other) {
-        final SphericCoordinate thisAsSpheric = this.asSphericCoordinate();
-        final SphericCoordinate otherAsSpheric = other.asSphericCoordinate();
+        this.assertClassInvariants();
+        AssertionUtils.assertNotNull(other);
 
-        final double sin = Math.sin(thisAsSpheric.getPhi()) * Math.sin(otherAsSpheric.getPhi());
-        final double deltaTheta = Math.abs(otherAsSpheric.getTheta()-thisAsSpheric.getTheta());
-        final double cos = Math.cos(thisAsSpheric.getPhi()) * Math.cos(otherAsSpheric.getPhi()) * Math.cos(deltaTheta);
+        final SphericCoordinate otherAsSpheric = other.asSphericCoordinate();
+        final double centralAngle = this.doGetCentralAngle(otherAsSpheric);
+
+        AssertionUtils.assertCentralAngle(centralAngle);
+        this.assertClassInvariants();
+        return centralAngle;
+    }
+
+    private double doGetCentralAngle(final SphericCoordinate other) {
+        final double sin = Math.sin(this.phi) * Math.sin(this.phi);
+        final double deltaTheta = Math.abs(other.theta-this.theta);
+        final double cos = Math.cos(this.phi) * Math.cos(other.phi) * Math.cos(deltaTheta);
         return Math.acos(sin + cos);
     }
 
     @Override
-    public boolean isEqual(final Coordinate other) {
-        if (other == null) {
-            return false;
-        }
-
+    protected boolean doCheckForEquality(final Coordinate other) {
         final SphericCoordinate cart = other.asSphericCoordinate();
-        return  this.compareDouble(cart.phi, this.phi) &&
-                this.compareDouble(cart.theta, this.theta) &&
-                this.compareDouble(cart.radius, this.radius);
+        return  CompareUtils.compareDouble(cart.phi, this.phi) &&
+                CompareUtils.compareDouble(cart.theta, this.theta) &&
+                CompareUtils.compareDouble(cart.radius, this.radius);
     }
 
     @Override
-    public void readFrom(final ResultSet rset) throws SQLException {
-        this.phi = rset.getDouble("location_phi");
-        this.theta = rset.getDouble("location_theta");
-        this.radius = rset.getDouble("location_radius");
+    protected void doReadFrom(final ResultSet rset) throws SQLException {
+        this.phi = AssertionUtils.assertAndGetDouble(rset.getDouble("location_phi"));
+        this.theta = AssertionUtils.assertAndGetDouble(rset.getDouble("location_theta"));
+        this.radius = AssertionUtils.assertAndGetDouble(rset.getDouble("location_radius"));
     }
 
     @Override
-    public void writeOn(final ResultSet rset) throws SQLException {
+    protected void doWriteOn(final ResultSet rset) throws SQLException {
         rset.updateDouble("location_phi", this.phi);
         rset.updateDouble("location_theta", this.theta);
         rset.updateDouble("location_radius", this.radius);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SphericCoordinate that = (SphericCoordinate) o;
-        return this.isEqual(that);
     }
 
     @Override
@@ -82,23 +100,23 @@ public class SphericCoordinate extends AbstractCoordinate {
         return phi;
     }
 
-    public void setPhi(double phi) {
-        this.phi = phi;
+    public void setPhi(final double phi) {
+        this.phi = AssertionUtils.assertAndGetDouble(phi);
     }
 
     public double getTheta() {
         return theta;
     }
 
-    public void setTheta(double theta) {
-        this.theta = theta;
+    public void setTheta(final double theta) {
+        this.theta = AssertionUtils.assertAndGetDouble(theta);
     }
 
     public double getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
-        this.radius = radius;
+    public void setRadius(final double radius) {
+        this.radius = AssertionUtils.assertAndGetDouble(radius);
     }
 }

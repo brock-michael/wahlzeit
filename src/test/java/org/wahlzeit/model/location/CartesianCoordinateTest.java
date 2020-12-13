@@ -1,13 +1,23 @@
-package org.wahlzeit.model;
+package org.wahlzeit.model.location;
 
 import org.junit.jupiter.api.Test;
-import org.wahlzeit.model.location.CartesianCoordinate;
-import org.wahlzeit.model.location.Coordinate;
-import org.wahlzeit.model.location.SphericCoordinate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CartesianCoordinateTest {
+
+    @Test
+    public void testInitWithInvalidParam() throws Exception {
+        CartesianCoordinate coord = null;
+
+        try {
+            coord = new CartesianCoordinate(Double.NaN, Double.NaN, Double.NaN);
+            throw new Exception("That shouldnt have happened :(");
+        } catch (IllegalStateException e) {
+            assertEquals(e.getMessage(), "Double value has to be a number");
+            assertNull(coord);
+        }
+    }
 
     @Test
     public void testAsCartesianCoordinate() {
@@ -24,7 +34,7 @@ class CartesianCoordinateTest {
             returnValue = coord1.getCartesianDistance(null);
             throw new Exception("That shouldnt have happened :(");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "Cant be null");
+            assertEquals(e.getMessage(), "Parameter can not be null");
             assertNull(returnValue);
         }
     }
@@ -150,4 +160,5 @@ class CartesianCoordinateTest {
         assertNotEquals(coord1, new Object());
         assertNotEquals(coord1, null);
     }
+
 }

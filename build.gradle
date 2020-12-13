@@ -21,7 +21,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
     
     implementation 'org.postgresql:postgresql:9.3-1104-jdbc41'    

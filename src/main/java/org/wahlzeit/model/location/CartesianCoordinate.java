@@ -10,9 +10,18 @@ public class CartesianCoordinate extends AbstractCoordinate {
     private double z;
 
     public CartesianCoordinate(final double x, final double y, final double z) {
+        AssertionUtils.assertMultibleDouble(x, y, z);
         this.x = x;
         this.y = y;
         this.z = z;
+        this.assertClassInvariants();
+    }
+
+    @Override
+    protected void assertClassInvariants() {
+        AssertionUtils.assertDouble(this.x);
+        AssertionUtils.assertDouble(this.y);
+        AssertionUtils.assertDouble(this.z);
     }
 
     @Override
@@ -22,6 +31,16 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public SphericCoordinate asSphericCoordinate() {
+        this.assertClassInvariants();
+
+        final SphericCoordinate sphericCoordinate = this.doConvertToSphericCoordinate();
+
+        AssertionUtils.assertValidCoordinate(sphericCoordinate);
+        this.assertClassInvariants();
+        return sphericCoordinate;
+    }
+
+    private SphericCoordinate doConvertToSphericCoordinate() {
         final boolean origin = this.x == 0 && this.y == 0 && this.z == 0;
         if (origin) {
             return new SphericCoordinate(0, 0, 0);
@@ -36,50 +55,45 @@ public class CartesianCoordinate extends AbstractCoordinate {
 
     @Override
     public double getCartesianDistance(final Coordinate other) {
-        if (other == null) {
-            throw new IllegalArgumentException("Cant be null");
-        }
+        this.assertClassInvariants();
+        AssertionUtils.assertNotNull(other);
 
         final CartesianCoordinate otherAsCart = other.asCartesianCoordinate();
-        final double distX = this.getX() - otherAsCart.getX();
-        final double distY = this.getY() - otherAsCart.getY();
-        final double distZ = this.getZ() - otherAsCart.getZ();
+        final double dist = doGetCartesianDistance(otherAsCart);
+
+        AssertionUtils.assertDouble(dist);
+        this.assertClassInvariants();
+        return dist;
+    }
+
+    private double doGetCartesianDistance(final CartesianCoordinate other) {
+        final double distX = this.x - other.x;
+        final double distY = this.y - other.y;
+        final double distZ = this.z - other.z;
 
         return Math.sqrt((distX*distX) + (distY*distY) + (distZ*distZ));
     }
 
     @Override
-    public boolean isEqual(final Coordinate other) {
-        if (other == null) {
-            return false;
-        }
-
+    protected boolean doCheckForEquality(final Coordinate other) {
         final CartesianCoordinate cart = other.asCartesianCoordinate();
-        return  this.compareDouble(cart.x, this.x) &&
-                this.compareDouble(cart.y, this.y) &&
-                this.compareDouble(cart.z, this.z);
+        return  CompareUtils.compareDouble(cart.x, this.x) &&
+                CompareUtils.compareDouble(cart.y, this.y) &&
+                CompareUtils.compareDouble(cart.z, this.z);
     }
 
     @Override
-    public void readFrom(final ResultSet rset) throws SQLException {
-        this.x = rset.getDouble("location_x");
-        this.y = rset.getDouble("location_y");
-        this.z = rset.getDouble("location_z");
+    protected void doReadFrom(final ResultSet rset) throws SQLException {
+        this.x = AssertionUtils.assertAndGetDouble(rset.getDouble("location_x"));
+        this.y = AssertionUtils.assertAndGetDouble(rset.getDouble("location_y"));
+        this.z = AssertionUtils.assertAndGetDouble(rset.getDouble("location_z"));
     }
 
     @Override
-    public void writeOn(final ResultSet rset) throws SQLException {
+    protected void doWriteOn(final ResultSet rset) throws SQLException {
         rset.updateDouble("location_x", this.x);
         rset.updateDouble("location_y", this.y);
         rset.updateDouble("location_z", this.z);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CartesianCoordinate that = (CartesianCoordinate) o;
-        return this.isEqual(that);
     }
 
     @Override
@@ -92,7 +106,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     public void setX(final double x) {
-        this.x = x;
+        this.x = AssertionUtils.assertAndGetDouble(x);
     }
 
     public double getY() {
@@ -100,7 +114,7 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     public void setY(final double y) {
-        this.y = y;
+        this.y = AssertionUtils.assertAndGetDouble(y);
     }
 
     public double getZ() {
@@ -108,6 +122,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     public void setZ(final double z) {
-        this.z = z;
+        this.z = AssertionUtils.assertAndGetDouble(z);
     }
 }
