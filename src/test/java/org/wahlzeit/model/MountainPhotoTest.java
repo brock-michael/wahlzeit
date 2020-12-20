@@ -56,6 +56,18 @@ class MountainPhotoTest {
     }
 
     @Test
+    public void testReadFromWithInvalidMountainHeight() throws SQLException, NoSuchFieldException, IllegalAccessException {
+        final ResultSet resultSetMock = setUpReadResultSetMock();
+        when(resultSetMock.getInt("mountain_height")).thenReturn(-1);
+
+        final MountainPhoto mountainPhoto = new MountainPhoto();
+
+        mountainPhoto.readFrom(resultSetMock);
+
+        assertEquals(0, mountainPhoto.getMountainHeight());
+    }
+
+    @Test
     public void testWriteOn() throws SQLException, NoSuchFieldException, IllegalAccessException, MalformedURLException {
         final ResultSet resultSetMock = Mockito.mock(ResultSet.class);
 
@@ -68,6 +80,19 @@ class MountainPhotoTest {
 
         verify(resultSetMock).updateInt("mountain_height", MOCK_RS_MOUNTAIN_HEIGHT);
         verify(resultSetMock).updateString("mountain_location", MOCK_RS_MOUNTAIN_LOCATION);
+    }
+
+    @Test
+    public void testWriteOnWithInvalidMountainHeight() throws SQLException, NoSuchFieldException, IllegalAccessException, MalformedURLException {
+        final ResultSet resultSetMock = Mockito.mock(ResultSet.class);
+
+        final MountainPhoto mountainPhoto = new MountainPhoto();
+        mountainPhoto.ownerHomePage = new URL(MOCK_RS_OWNER_HOME_PAGE);
+        this.setPrivateField(mountainPhoto, "mountainHeight", -1);
+
+        mountainPhoto.writeOn(resultSetMock);
+
+        verify(resultSetMock).updateInt("mountain_height", 0);
     }
 
     private ResultSet setUpReadResultSetMock() throws SQLException {

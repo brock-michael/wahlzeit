@@ -1,9 +1,14 @@
 package org.wahlzeit.model;
 
+import org.wahlzeit.model.location.AssertionUtils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MountainPhoto extends Photo {
+
+    private static final String LABEL_MOUNTAIN_HEIGHT = "mountain_height";
+    private static final String LABEL_MOUNTAIN_LOCATION = "mountain_location";
 
     private int mountainHeight = 0;
     private String mountainLocation = "-";
@@ -24,15 +29,31 @@ public class MountainPhoto extends Photo {
     @Override
     public void readFrom(ResultSet rset) throws SQLException {
         super.readFrom(rset);
-        this.mountainHeight = rset.getInt("mountain_height");
-        this.mountainLocation = rset.getString("mountain_location");
+
+        final int mountain_height = rset.getInt(LABEL_MOUNTAIN_HEIGHT);
+
+        try {
+            AssertionUtils.assertNotNegative(mountain_height);
+            this.mountainHeight = mountain_height;
+        } catch (IllegalStateException e) {
+            this.mountainHeight = 0;
+        }
+
+        this.mountainLocation = rset.getString(LABEL_MOUNTAIN_LOCATION);
     }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException {
         super.writeOn(rset);
-        rset.updateInt("mountain_height", this.mountainHeight);
-        rset.updateString("mountain_location", this.mountainLocation);
+
+        try {
+            AssertionUtils.assertNotNegative(this.mountainHeight);
+            rset.updateInt(LABEL_MOUNTAIN_HEIGHT, this.mountainHeight);
+        } catch (IllegalStateException e) {
+            // mountainHeightToSet stays as before
+        }
+
+        rset.updateString(LABEL_MOUNTAIN_LOCATION, this.mountainLocation);
     }
 
     public int getMountainHeight() {

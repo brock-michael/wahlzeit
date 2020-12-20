@@ -173,7 +173,14 @@ public class Photo extends DataObject {
 		maxPhotoSize = PhotoSize.getFromWidthHeight(width, height);
 
 		if (this.location != null) {
-			this.location.readFrom(rset);
+			try {
+				this.location.readFrom(rset);
+			} catch (IllegalArgumentException | IllegalStateException e) {
+				final StringBuffer s = new StringBuffer("Location of Photo with id: " + id +
+						" could not be read, due to :" + e.getMessage() + ". Fall back to default location.");
+				SysLog.log(s);
+				this.location = Location.buildWithCartesianCoord(0, 0, 0);
+			}
 		}
 	}
 	
@@ -197,7 +204,13 @@ public class Photo extends DataObject {
 		rset.updateLong("creation_time", creationTime);
 
 		if (this.location != null) {
-			this.location.writeOn(rset);
+			try {
+				this.location.writeOn(rset);
+			} catch (IllegalArgumentException | IllegalStateException e) {
+				final StringBuffer s = new StringBuffer("Location of Photo with id: " + id +
+						" could not be persisted, due to :" + e.getMessage());
+				SysLog.log(s);
+			}
 		}
 	}
 

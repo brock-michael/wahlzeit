@@ -27,6 +27,12 @@ public class AssertionUtils {
         }
     }
 
+    public static void assertNotNegative(final int value) {
+        if (value < 0) {
+            throw new IllegalStateException("Value can not be negative");
+        }
+    }
+
     public static void assertNotNull(final Object object) {
         if (object == null) {
             throw new IllegalArgumentException("Parameter can not be null");
