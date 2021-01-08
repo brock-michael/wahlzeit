@@ -2,20 +2,43 @@ package org.wahlzeit.model.location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public class SphericCoordinate extends AbstractCoordinate {
-    private double phi;
-    private double theta;
-    private double radius;
+public final class SphericCoordinate extends AbstractCoordinate {
+    private final double phi;
+    private final double theta;
+    private final double radius;
 
-    public SphericCoordinate(final double phi, final double theta, final double radius) {
-        AssertionUtils.assertMultibleDouble(phi, theta, radius);
-        AssertionUtils.assertNotNegative(radius);
+    private static final Map<Integer, SphericCoordinate> values = new HashMap<>();
+
+    private SphericCoordinate(final double phi, final double theta, final double radius) {
         this.phi = phi;
         this.theta = theta;
         this.radius = radius;
-        this.assertClassInvariants();
+    }
+
+    public static SphericCoordinate build(final double phi, final double theta, final double radius) {
+        AssertionUtils.assertMultibleDouble(phi, theta, radius);
+        AssertionUtils.assertNotNegative(radius);
+        final SphericCoordinate coord = new SphericCoordinate(phi, theta, radius);
+        coord.assertClassInvariants();
+
+        int id = coord.hashCode();
+        if (values.containsKey(id)) {
+            return values.get(id);
+        } else {
+            values.put(id, coord);
+            return coord;
+        }
+    }
+
+    public static CartesianCoordinate buildFromResultSet(final ResultSet rset) throws SQLException {
+        final double phi = AssertionUtils.assertAndGetDouble(rset.getDouble("location_phi"));
+        final double theta = AssertionUtils.assertAndGetDouble(rset.getDouble("location_theta"));
+        final double radius = AssertionUtils.assertAndGetDouble(rset.getDouble("location_radius"));
+        return CartesianCoordinate.build(phi, theta, radius);
     }
 
     @Override
@@ -41,7 +64,7 @@ public class SphericCoordinate extends AbstractCoordinate {
         final double x = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
         final double y = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
         final double z = this.radius * Math.cos(this.theta);
-        return new CartesianCoordinate(x, y, z);
+        return CartesianCoordinate.build(x, y, z);
     }
 
     @Override
@@ -78,13 +101,6 @@ public class SphericCoordinate extends AbstractCoordinate {
     }
 
     @Override
-    protected void doReadFrom(final ResultSet rset) throws SQLException {
-        this.phi = AssertionUtils.assertAndGetDouble(rset.getDouble("location_phi"));
-        this.theta = AssertionUtils.assertAndGetDouble(rset.getDouble("location_theta"));
-        this.radius = AssertionUtils.assertAndGetDouble(rset.getDouble("location_radius"));
-    }
-
-    @Override
     protected void doWriteOn(final ResultSet rset) throws SQLException {
         rset.updateDouble("location_phi", this.phi);
         rset.updateDouble("location_theta", this.theta);
@@ -100,23 +116,11 @@ public class SphericCoordinate extends AbstractCoordinate {
         return phi;
     }
 
-    public void setPhi(final double phi) {
-        this.phi = AssertionUtils.assertAndGetDouble(phi);
-    }
-
     public double getTheta() {
         return theta;
     }
 
-    public void setTheta(final double theta) {
-        this.theta = AssertionUtils.assertAndGetDouble(theta);
-    }
-
     public double getRadius() {
         return radius;
-    }
-
-    public void setRadius(final double radius) {
-        this.radius = AssertionUtils.assertAndGetDouble(radius);
     }
 }

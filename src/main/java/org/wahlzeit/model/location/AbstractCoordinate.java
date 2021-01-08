@@ -9,8 +9,6 @@ public abstract class AbstractCoordinate implements Coordinate {
 
     protected abstract boolean doCheckForEquality(final Coordinate coordinate);
 
-    protected abstract void doReadFrom(final ResultSet rset) throws SQLException;
-
     protected abstract void doWriteOn(final ResultSet rset) throws SQLException;
 
     @Override
@@ -41,13 +39,22 @@ public abstract class AbstractCoordinate implements Coordinate {
     }
 
     @Override
-    public void readFrom(final ResultSet rset) throws SQLException {
+    public Coordinate readFrom(final ResultSet rset) throws SQLException {
         this.assertClassInvariants();
         AssertionUtils.assertNotNull(rset);
 
-        this.doReadFrom(rset);
+        final AbstractCoordinate coord;
+        if (this instanceof CartesianCoordinate) {
+            coord = CartesianCoordinate.buildFromResultSet(rset);
+        } else if (this instanceof SphericCoordinate) {
+            coord = SphericCoordinate.buildFromResultSet(rset);
+        } else {
+            throw new IllegalStateException("Invalid Coordinate-Type to read");
+        }
 
-        this.assertClassInvariants();
+        coord.assertClassInvariants();
+
+        return coord;
     }
 
     @Override

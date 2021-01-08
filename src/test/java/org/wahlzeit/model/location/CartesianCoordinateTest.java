@@ -2,6 +2,9 @@ package org.wahlzeit.model.location;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class CartesianCoordinateTest {
@@ -11,7 +14,7 @@ class CartesianCoordinateTest {
         CartesianCoordinate coord = null;
 
         try {
-            coord = new CartesianCoordinate(Double.NaN, Double.NaN, Double.NaN);
+            coord = CartesianCoordinate.build(Double.NaN, Double.NaN, Double.NaN);
             throw new Exception("That shouldnt have happened :(");
         } catch (IllegalStateException e) {
             assertEquals(e.getMessage(), "Double value has to be a number");
@@ -21,13 +24,13 @@ class CartesianCoordinateTest {
 
     @Test
     public void testAsCartesianCoordinate() {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 10, 15);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 10, 15);
         assertEquals(coord1, coord1.asCartesianCoordinate());
     }
 
     @Test
     public void testGetDistanceWithIllegalInput() throws Exception {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 5, 5);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
         Double returnValue = null;
 
         try {
@@ -44,8 +47,8 @@ class CartesianCoordinateTest {
         final double x1 = 5, x2 = 10;
         final double y1 = 5, y2 = 10;
         final double z1 = 5, z2 = 10;
-        final CartesianCoordinate coord1 = new CartesianCoordinate(x1, y1, z1);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(x2, y2, z2);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(x1, y1, z1);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(x2, y2, z2);
 
         final double calcDist1 = coord2.getCartesianDistance(coord1);
         final double calcDist2 = coord1.getCartesianDistance(coord2);
@@ -64,9 +67,9 @@ class CartesianCoordinateTest {
         final double phi = Math.atan2(y, x);
         final double radius = Math.sqrt(x*x + y*y + z*z);
         final double theta = Math.acos(z / radius);
-        final SphericCoordinate expectedCoordinate = new SphericCoordinate(phi, radius, theta);
+        final SphericCoordinate expectedCoordinate = SphericCoordinate.build(phi, radius, theta);
 
-        final Coordinate coordinate = new CartesianCoordinate(x, y, z);
+        final Coordinate coordinate = CartesianCoordinate.build(x, y, z);
         assertEquals(expectedCoordinate, coordinate.asSphericCoordinate());
     }
 
@@ -75,8 +78,8 @@ class CartesianCoordinateTest {
         final double x1 = 5, x2 = 5;
         final double y1 = 10, y2 = 10;
         final double z1 = 15, z2 = 15;
-        final Coordinate coord1 = new CartesianCoordinate(x1, y1, z1);
-        final Coordinate coord2 = new CartesianCoordinate(x2, y2, z2);
+        final Coordinate coord1 = CartesianCoordinate.build(x1, y1, z1);
+        final Coordinate coord2 = CartesianCoordinate.build(x2, y2, z2);
 
         final double phi1 = Math.atan2(y1, x1);
         final double radius1 = Math.sqrt(x1*x1 + y1*y1 + z1*z1);
@@ -98,29 +101,27 @@ class CartesianCoordinateTest {
 
     @Test
     void testIsEqualTrue() {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 5, 5);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(5, 5, 5);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(5, 5, 5);
 
         assertTrue(coord1.isEqual(coord2));
     }
 
     @Test
     void testIsEqualFalse() {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 5, 5);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(5, 5, 5);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(5, 5, 5);
 
         assertTrue(coord1.isEqual(coord2));
 
-        coord2.setX(coord2.getX()+1);
-        assertFalse(coord1.isEqual(coord2));
+        final CartesianCoordinate coord3 = CartesianCoordinate.build(6, 5, 5);
+        assertFalse(coord1.isEqual(coord3));
 
-        coord2.setX(coord1.getX());
-        coord2.setY(coord2.getY()+1);
-        assertFalse(coord1.isEqual(coord2));
+        final CartesianCoordinate coord4 = CartesianCoordinate.build(5, 6, 5);
+        assertFalse(coord1.isEqual(coord4));
 
-        coord2.setY(coord1.getY());
-        coord2.setZ(coord2.getZ()+1);
-        assertFalse(coord1.isEqual(coord2));
+        final CartesianCoordinate coord5 = CartesianCoordinate.build(5, 5, 6);
+        assertFalse(coord1.isEqual(coord5));
 
         assertFalse(coord1.isEqual(null));
     }
@@ -136,16 +137,16 @@ class CartesianCoordinateTest {
         }
         double x2 = .1 * 11;
 
-        final CartesianCoordinate coord1 = new CartesianCoordinate(x1, y, z);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(x2, y, z);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(x1, y, z);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(x2, y, z);
 
         assertTrue(coord1.isEqual(coord2));
     }
 
     @Test
     public void testEqualsTrue() {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 5, 5);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(5, 5, 5);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(5, 5, 5);
 
         assertEquals(coord2, coord1);
         assertEquals(coord1, coord1);
@@ -153,12 +154,29 @@ class CartesianCoordinateTest {
 
     @Test
     public void testEqualsFalse() {
-        final CartesianCoordinate coord1 = new CartesianCoordinate(5, 5, 5);
-        final CartesianCoordinate coord2 = new CartesianCoordinate(5, 6, 5);
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(5, 6, 5);
 
         assertNotEquals(coord1, coord2);
         assertNotEquals(coord1, new Object());
         assertNotEquals(coord1, null);
+    }
+
+    @Test
+    public void testValueAlreadyExists() throws NoSuchFieldException, IllegalAccessException {
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        final CartesianCoordinate coord2 = CartesianCoordinate.build(6, 5, 5);
+        final CartesianCoordinate coord3 = CartesianCoordinate.build(5, 5, 5);
+
+        final Field valuesField = CartesianCoordinate.class.getDeclaredField("values");
+        valuesField.setAccessible(true);
+        final Object valuesFieldValue = valuesField.get(null);
+
+        if (valuesFieldValue instanceof HashMap) {
+            assertEquals(((HashMap<?, ?>) valuesFieldValue).size(), 2);
+        } else {
+            fail("Values field has to be a HashMap");
+        }
     }
 
 }

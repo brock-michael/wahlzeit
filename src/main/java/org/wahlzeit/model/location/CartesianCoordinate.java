@@ -2,19 +2,42 @@ package org.wahlzeit.model.location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public class CartesianCoordinate extends AbstractCoordinate {
-    private double x;
-    private double y;
-    private double z;
+public final class CartesianCoordinate extends AbstractCoordinate {
+    private final double x;
+    private final double y;
+    private final double z;
 
-    public CartesianCoordinate(final double x, final double y, final double z) {
-        AssertionUtils.assertMultibleDouble(x, y, z);
+    private static final Map<Integer, CartesianCoordinate> values = new HashMap<>();
+
+    private CartesianCoordinate(final double x, final double y, final double z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.assertClassInvariants();
+    }
+
+    public static CartesianCoordinate build(final double x, final double y, final double z) {
+        AssertionUtils.assertMultibleDouble(x, y, z);
+        final CartesianCoordinate coord = new CartesianCoordinate(x, y, z);
+        coord.assertClassInvariants();
+
+        int id = coord.hashCode();
+        if (values.containsKey(id)) {
+            return values.get(id);
+        } else {
+            values.put(id, coord);
+            return coord;
+        }
+    }
+
+    public static CartesianCoordinate buildFromResultSet(final ResultSet rset) throws SQLException {
+        final double x = AssertionUtils.assertAndGetDouble(rset.getDouble("location_x"));
+        final double y = AssertionUtils.assertAndGetDouble(rset.getDouble("location_y"));
+        final double z = AssertionUtils.assertAndGetDouble(rset.getDouble("location_z"));
+        return CartesianCoordinate.build(x, y, z);
     }
 
     @Override
@@ -43,14 +66,14 @@ public class CartesianCoordinate extends AbstractCoordinate {
     private SphericCoordinate doConvertToSphericCoordinate() {
         final boolean origin = this.x == 0 && this.y == 0 && this.z == 0;
         if (origin) {
-            return new SphericCoordinate(0, 0, 0);
+            return SphericCoordinate.build(0, 0, 0);
         }
 
         final double radius = Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z);
         final double phi = Math.atan2(this.y, this.x);
         final double theta = Math.acos(this.z / radius);
 
-        return new SphericCoordinate(phi, theta, radius);
+        return SphericCoordinate.build(phi, theta, radius);
     }
 
     @Override
@@ -83,13 +106,6 @@ public class CartesianCoordinate extends AbstractCoordinate {
     }
 
     @Override
-    protected void doReadFrom(final ResultSet rset) throws SQLException {
-        this.x = AssertionUtils.assertAndGetDouble(rset.getDouble("location_x"));
-        this.y = AssertionUtils.assertAndGetDouble(rset.getDouble("location_y"));
-        this.z = AssertionUtils.assertAndGetDouble(rset.getDouble("location_z"));
-    }
-
-    @Override
     protected void doWriteOn(final ResultSet rset) throws SQLException {
         rset.updateDouble("location_x", this.x);
         rset.updateDouble("location_y", this.y);
@@ -105,23 +121,11 @@ public class CartesianCoordinate extends AbstractCoordinate {
         return x;
     }
 
-    public void setX(final double x) {
-        this.x = AssertionUtils.assertAndGetDouble(x);
-    }
-
     public double getY() {
         return y;
     }
 
-    public void setY(final double y) {
-        this.y = AssertionUtils.assertAndGetDouble(y);
-    }
-
     public double getZ() {
         return z;
-    }
-
-    public void setZ(final double z) {
-        this.z = AssertionUtils.assertAndGetDouble(z);
     }
 }

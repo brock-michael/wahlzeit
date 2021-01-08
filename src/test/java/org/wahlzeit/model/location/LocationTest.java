@@ -13,14 +13,14 @@ class LocationTest {
         final double z = 7;
 
         final Location loc = Location.buildWithCartesianCoord(x, y, z);
-        assertEquals(loc.getCoordinate(), new CartesianCoordinate(x, y, z));
+        assertEquals(loc.getCoordinate(), CartesianCoordinate.build(x, y, z));
     }
 
     @Test
     public void testSetCartCoordinate() {
         final Location loc = Location.buildWithCartesianCoord(5, 6, 7);
 
-        final CartesianCoordinate newCartesianCoordinate = new CartesianCoordinate(10, 12, 14);
+        final CartesianCoordinate newCartesianCoordinate = CartesianCoordinate.build(10, 12, 14);
         loc.setCartesianCoord(newCartesianCoordinate.getX(), newCartesianCoordinate.getY(), newCartesianCoordinate.getZ());
 
         assertEquals(loc.getCoordinate(), newCartesianCoordinate);
@@ -30,7 +30,7 @@ class LocationTest {
     public void testCreateInvalidCartesianCoordinate() {
         final Location loc = Location.buildWithCartesianCoord(Double.NaN, 234.3, 84.5);
 
-        final CartesianCoordinate expectedCoord = new CartesianCoordinate(0, 0, 0);
+        final CartesianCoordinate expectedCoord = CartesianCoordinate.build(0, 0, 0);
 
         assertEquals(loc.getCoordinate(), expectedCoord);
     }
@@ -39,7 +39,7 @@ class LocationTest {
     public void testCreateInvalidSphericCoordinate() {
         final Location loc = Location.buildWithSphericCoord(Double.NaN, 234.3, 84.5);
 
-        final SphericCoordinate expectedCoord = new SphericCoordinate(0, 0, 0);
+        final SphericCoordinate expectedCoord = SphericCoordinate.build(0, 0, 0);
 
         assertEquals(loc.getCoordinate(), expectedCoord);
     }

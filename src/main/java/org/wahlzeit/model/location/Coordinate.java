@@ -15,7 +15,7 @@ public interface Coordinate {
 
     boolean isEqual(final Coordinate other);
 
-    void readFrom(final ResultSet rset) throws SQLException;
+    Coordinate readFrom(final ResultSet rset) throws SQLException;
 
     void writeOn(final ResultSet rset) throws SQLException;
 
