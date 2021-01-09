@@ -156,19 +156,32 @@ class SphericCoordinateTest {
     }
 
     @Test
-    public void testValueAlreadyExists() throws NoSuchFieldException, IllegalAccessException {
-        final SphericCoordinate coord1 = SphericCoordinate.build(5, 5, 5);
-        final SphericCoordinate coord2 = SphericCoordinate.build(6, 5, 5);
-        final SphericCoordinate coord3 = SphericCoordinate.build(5, 5, 5);
+    public void testValueAlreadyExists() throws Exception {
+        SphericCoordinate.build(5, 5, 5);
+        SphericCoordinate.build(6, 5, 5);
+        CartesianCoordinate.build(5, 5, 5);
+        SphericCoordinate.build(5, 5, 5);
 
-        final Field valuesField = SphericCoordinate.class.getDeclaredField("values");
+        assertEquals(this.getValuesHashMap().size(), 3);
+    }
+
+    @Test
+    public void testCartesianAndSphericObjectSharing() throws Exception {
+        final SphericCoordinate coord1 = SphericCoordinate.build(5, 5, 5);
+        coord1.asCartesianCoordinate();
+
+        assertEquals(this.getValuesHashMap().size(), 2);
+    }
+
+    private HashMap<?, ?> getValuesHashMap() throws Exception {
+        final Field valuesField = AbstractCoordinate.class.getDeclaredField("values");
         valuesField.setAccessible(true);
         final Object valuesFieldValue = valuesField.get(null);
 
         if (valuesFieldValue instanceof HashMap) {
-            assertEquals(((HashMap<?, ?>) valuesFieldValue).size(), 2);
+            return (HashMap<?, ?>) valuesFieldValue;
         } else {
-            fail("Values field has to be a HashMap");
+            throw new Exception("Values field has to be a HashMap");
         }
     }
 

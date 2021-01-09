@@ -2,16 +2,12 @@ package org.wahlzeit.model.location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public final class CartesianCoordinate extends AbstractCoordinate {
     private final double x;
     private final double y;
     private final double z;
-
-    private static final Map<Integer, CartesianCoordinate> values = new HashMap<>();
 
     private CartesianCoordinate(final double x, final double y, final double z) {
         this.x = x;
@@ -26,7 +22,7 @@ public final class CartesianCoordinate extends AbstractCoordinate {
 
         int id = coord.hashCode();
         if (values.containsKey(id)) {
-            return values.get(id);
+            return values.get(id).asCartesianCoordinate();
         } else {
             values.put(id, coord);
             return coord;

@@ -2,8 +2,12 @@ package org.wahlzeit.model.location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractCoordinate implements Coordinate {
+
+    protected static final Map<Integer, AbstractCoordinate> values = new HashMap<>();
 
     protected abstract void assertClassInvariants();
 

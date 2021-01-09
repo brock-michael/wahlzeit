@@ -163,19 +163,33 @@ class CartesianCoordinateTest {
     }
 
     @Test
-    public void testValueAlreadyExists() throws NoSuchFieldException, IllegalAccessException {
-        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
-        final CartesianCoordinate coord2 = CartesianCoordinate.build(6, 5, 5);
-        final CartesianCoordinate coord3 = CartesianCoordinate.build(5, 5, 5);
+    public void testValueAlreadyExists() throws Exception {
+        CartesianCoordinate.build(5, 5, 5);
+        CartesianCoordinate.build(6, 5, 5);
+        SphericCoordinate.build(5, 5, 5);
 
-        final Field valuesField = CartesianCoordinate.class.getDeclaredField("values");
+        CartesianCoordinate.build(5, 5, 5);
+
+        assertEquals(this.getValuesHashMap().size(), 3);
+    }
+
+    @Test
+    public void testCartesianAndSphericObjectSharing() throws Exception {
+        final CartesianCoordinate coord1 = CartesianCoordinate.build(5, 5, 5);
+        coord1.asSphericCoordinate();
+
+        assertEquals(this.getValuesHashMap().size(), 2);
+    }
+
+    private HashMap<?, ?> getValuesHashMap() throws Exception {
+        final Field valuesField = AbstractCoordinate.class.getDeclaredField("values");
         valuesField.setAccessible(true);
         final Object valuesFieldValue = valuesField.get(null);
 
         if (valuesFieldValue instanceof HashMap) {
-            assertEquals(((HashMap<?, ?>) valuesFieldValue).size(), 2);
+            return (HashMap<?, ?>) valuesFieldValue;
         } else {
-            fail("Values field has to be a HashMap");
+            throw new Exception("Values field has to be a HashMap");
         }
     }
 

@@ -2,16 +2,12 @@ package org.wahlzeit.model.location;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public final class SphericCoordinate extends AbstractCoordinate {
     private final double phi;
     private final double theta;
     private final double radius;
-
-    private static final Map<Integer, SphericCoordinate> values = new HashMap<>();
 
     private SphericCoordinate(final double phi, final double theta, final double radius) {
         this.phi = phi;
@@ -27,7 +23,7 @@ public final class SphericCoordinate extends AbstractCoordinate {
 
         int id = coord.hashCode();
         if (values.containsKey(id)) {
-            return values.get(id);
+            return values.get(id).asSphericCoordinate();
         } else {
             values.put(id, coord);
             return coord;
