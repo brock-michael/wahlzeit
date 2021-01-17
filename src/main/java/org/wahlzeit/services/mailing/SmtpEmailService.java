@@ -25,10 +25,15 @@ import javax.mail.*;
 import javax.mail.internet.*;
 
 import org.wahlzeit.services.EmailAddress;
+import org.wahlzeit.utils.PatternInstance;
 
 /**
  * 
  */
+@PatternInstance(
+		patternName = "Strategy Pattern",
+		participants = {"ConcreteStrategy"}
+)
 public class SmtpEmailService extends AbstractEmailService {
 	
 	/**

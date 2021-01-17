@@ -22,12 +22,17 @@ package org.wahlzeit.services.mailing;
 
 import org.wahlzeit.services.EmailAddress;
 import org.wahlzeit.services.SysLog;
+import org.wahlzeit.utils.PatternInstance;
 
 /**
  * 
  * @author dirk
  *
  */
+@PatternInstance(
+		patternName = "Strategy Pattern, Decorator",
+		participants = {"ConcreteStrategy", "Concrete Component"}
+)
 public class NullEmailService implements EmailService {
 
 	@Override

@@ -1,10 +1,15 @@
 package org.wahlzeit.model;
 
 import org.wahlzeit.model.location.AssertionUtils;
+import org.wahlzeit.utils.PatternInstance;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@PatternInstance(
+        patternName = "Abstract Factory",
+        participants = {"ConcreteProduct"}
+)
 public class MountainPhoto extends Photo {
 
     private static final String LABEL_MOUNTAIN_HEIGHT = "mountain_height";

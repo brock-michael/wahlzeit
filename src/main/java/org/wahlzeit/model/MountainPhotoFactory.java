@@ -1,8 +1,14 @@
 package org.wahlzeit.model;
 
+import org.wahlzeit.utils.PatternInstance;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@PatternInstance(
+        patternName = "Abstract Factory",
+        participants = {"ConcreteFactory"}
+)
 public class MountainPhotoFactory extends PhotoFactory {
 
     @Override
