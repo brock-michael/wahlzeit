@@ -1,6 +1,6 @@
 package org.wahlzeit.model;
 
-import org.wahlzeit.model.location.AssertionUtils;
+import org.wahlzeit.model.mountain.Mountain;
 import org.wahlzeit.utils.PatternInstance;
 
 import java.sql.ResultSet;
@@ -12,60 +12,36 @@ import java.sql.SQLException;
 )
 public class MountainPhoto extends Photo {
 
-    private static final String LABEL_MOUNTAIN_HEIGHT = "mountain_height";
-    private static final String LABEL_MOUNTAIN_LOCATION = "mountain_location";
+    private final Mountain mountain;
 
-    private int mountainHeight = 0;
-    private String mountainLocation = "-";
-
-
-    public MountainPhoto() {
+    public MountainPhoto(final Mountain mountain) {
         super();
+        this.mountain = mountain;
     }
 
-    public MountainPhoto(PhotoId myId) {
+    public MountainPhoto(final Mountain mountain, PhotoId myId) {
         super(myId);
+        this.mountain = mountain;
     }
 
-    public MountainPhoto(ResultSet rset) throws SQLException {
+    public MountainPhoto(final Mountain mountain, ResultSet rset) throws SQLException {
+        this.mountain = mountain;
         this.readFrom(rset);
     }
 
     @Override
     public void readFrom(ResultSet rset) throws SQLException {
         super.readFrom(rset);
-
-        final int mountain_height = rset.getInt(LABEL_MOUNTAIN_HEIGHT);
-
-        try {
-            AssertionUtils.assertNotNegative(mountain_height);
-            this.mountainHeight = mountain_height;
-        } catch (IllegalStateException e) {
-            this.mountainHeight = 0;
-        }
-
-        this.mountainLocation = rset.getString(LABEL_MOUNTAIN_LOCATION);
+        this.mountain.readFrom(rset);
     }
 
     @Override
     public void writeOn(ResultSet rset) throws SQLException {
         super.writeOn(rset);
-
-        try {
-            AssertionUtils.assertNotNegative(this.mountainHeight);
-            rset.updateInt(LABEL_MOUNTAIN_HEIGHT, this.mountainHeight);
-        } catch (IllegalStateException e) {
-            // mountainHeightToSet stays as before
-        }
-
-        rset.updateString(LABEL_MOUNTAIN_LOCATION, this.mountainLocation);
+        this.mountain.writeOn(rset);
     }
 
-    public int getMountainHeight() {
-        return mountainHeight;
-    }
-
-    public String getMountainLocation() {
-        return mountainLocation;
+    public Mountain getMountain() {
+        return this.mountain;
     }
 }

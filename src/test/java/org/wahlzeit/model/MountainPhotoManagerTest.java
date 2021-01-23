@@ -34,8 +34,8 @@ class MountainPhotoManagerTest {
         assertTrue(photo instanceof MountainPhoto);
         assertEquals(photo.ownerEmailAddress.asString(), MOCK_RS_OWNER_MAIL);
         assertEquals(photo.ownerHomePage.toString(), MOCK_RS_OWNER_HOME_PAGE);
-        assertEquals(((MountainPhoto) photo).getMountainHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
-        assertEquals(((MountainPhoto) photo).getMountainLocation(), MOCK_RS_MOUNTAIN_LOCATION);
+        assertEquals(((MountainPhoto) photo).getMountain().getHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
+        assertEquals(((MountainPhoto) photo).getMountain().getLocation(), MOCK_RS_MOUNTAIN_LOCATION);
     }
 
 }

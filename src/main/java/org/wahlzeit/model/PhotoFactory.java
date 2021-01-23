@@ -32,7 +32,7 @@ import org.wahlzeit.utils.PatternInstance;
 		patternName = "AbstractFactory",
 		participants = {"AbstractFactory", "ConcreteFactory"}
 )
-public class PhotoFactory {
+public class PhotoFactory implements FactoryWithType {
 	
 	/**
 	 * Hidden singleton instance; needs to be initialized from the outside.
@@ -111,4 +111,8 @@ public class PhotoFactory {
 		return new PhotoTagCollector();
 	}
 
+
+	public void setType(String mountainName) {
+		// impl in subclasses
+	}
 }

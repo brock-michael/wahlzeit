@@ -2,6 +2,8 @@ package org.wahlzeit.model;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.wahlzeit.model.mountain.Mountain;
+import org.wahlzeit.model.mountain.MountainManager;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -19,10 +21,12 @@ class MountainPhotoTest {
     private static final int MOCK_RS_MOUNTAIN_HEIGHT = 3000;
     private static final String MOCK_RS_MOUNTAIN_LOCATION = "Austria";
 
+    private static final Mountain mountain = MountainManager.instance.createMountain("volcanic");
+
     @Test
     public void testCreateSimple() {
-        final MountainPhoto mountainPhoto1 = new MountainPhoto();
-        final MountainPhoto mountainPhoto2 = new MountainPhoto(new PhotoId(5));
+        final MountainPhoto mountainPhoto1 = new MountainPhoto(null);
+        final MountainPhoto mountainPhoto2 = new MountainPhoto(null, new PhotoId(5));
 
         assertTrue(mountainPhoto1.id.isEqual(new PhotoId(1)));
         assertTrue(mountainPhoto2.id.isEqual(new PhotoId(5)));
@@ -32,27 +36,27 @@ class MountainPhotoTest {
     public void testCreateWithResultSet() throws SQLException {
         final ResultSet resultSetMock = setUpReadResultSetMock();
 
-        final MountainPhoto mountainPhoto = new MountainPhoto(resultSetMock);
+        final MountainPhoto mountainPhoto = new MountainPhoto(mountain, resultSetMock);
 
         assertEquals(mountainPhoto.ownerEmailAddress.asString(), MOCK_RS_OWNER_EMAIL);
         assertEquals(mountainPhoto.ownerHomePage.toString(), MOCK_RS_OWNER_HOME_PAGE);
-        assertEquals(mountainPhoto.getMountainHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
-        assertEquals(mountainPhoto.getMountainLocation(), MOCK_RS_MOUNTAIN_LOCATION);
+        assertEquals(mountainPhoto.getMountain().getHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
+        assertEquals(mountainPhoto.getMountain().getLocation(), MOCK_RS_MOUNTAIN_LOCATION);
     }
 
     @Test
     public void testReadFrom() throws SQLException {
         final ResultSet resultSetMock = setUpReadResultSetMock();
 
-        final MountainPhoto mountainPhoto = new MountainPhoto();
+        final MountainPhoto mountainPhoto = new MountainPhoto(mountain);
 
-        assertEquals(mountainPhoto.getMountainHeight(), 0);
-        assertEquals(mountainPhoto.getMountainLocation(), "-");
+        assertEquals(mountainPhoto.getMountain().getHeight(), 0);
+        assertEquals(mountainPhoto.getMountain().getLocation(), "-");
 
         mountainPhoto.readFrom(resultSetMock);
 
-        assertEquals(mountainPhoto.getMountainHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
-        assertEquals(mountainPhoto.getMountainLocation(), MOCK_RS_MOUNTAIN_LOCATION);
+        assertEquals(mountainPhoto.getMountain().getHeight(), MOCK_RS_MOUNTAIN_HEIGHT);
+        assertEquals(mountainPhoto.getMountain().getLocation(), MOCK_RS_MOUNTAIN_LOCATION);
     }
 
     @Test
@@ -60,18 +64,18 @@ class MountainPhotoTest {
         final ResultSet resultSetMock = setUpReadResultSetMock();
         when(resultSetMock.getInt("mountain_height")).thenReturn(-1);
 
-        final MountainPhoto mountainPhoto = new MountainPhoto();
+        final MountainPhoto mountainPhoto = new MountainPhoto(mountain);
 
         mountainPhoto.readFrom(resultSetMock);
 
-        assertEquals(0, mountainPhoto.getMountainHeight());
+        assertEquals(0, mountainPhoto.getMountain().getHeight());
     }
 
     @Test
     public void testWriteOn() throws SQLException, NoSuchFieldException, IllegalAccessException, MalformedURLException {
         final ResultSet resultSetMock = Mockito.mock(ResultSet.class);
 
-        final MountainPhoto mountainPhoto = new MountainPhoto();
+        final MountainPhoto mountainPhoto = new MountainPhoto(mountain);
         mountainPhoto.ownerHomePage = new URL(MOCK_RS_OWNER_HOME_PAGE);
         this.setPrivateField(mountainPhoto, "mountainHeight", MOCK_RS_MOUNTAIN_HEIGHT);
         this.setPrivateField(mountainPhoto, "mountainLocation", MOCK_RS_MOUNTAIN_LOCATION);
@@ -86,7 +90,7 @@ class MountainPhotoTest {
     public void testWriteOnWithInvalidMountainHeight() throws SQLException, NoSuchFieldException, IllegalAccessException, MalformedURLException {
         final ResultSet resultSetMock = Mockito.mock(ResultSet.class);
 
-        final MountainPhoto mountainPhoto = new MountainPhoto();
+        final MountainPhoto mountainPhoto = new MountainPhoto(mountain);
         mountainPhoto.ownerHomePage = new URL(MOCK_RS_OWNER_HOME_PAGE);
         this.setPrivateField(mountainPhoto, "mountainHeight", -1);
 

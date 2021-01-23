@@ -3,6 +3,8 @@ package org.wahlzeit.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.wahlzeit.model.mountain.MountainManager;
+import org.wahlzeit.model.mountain.MountainType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,6 +42,24 @@ class MountainPhotoFactoryTest {
         final Photo photo = photoFactory.createPhoto(resultSetMock);
 
         assertTrue(photo instanceof MountainPhoto);
+    }
+
+    @Test
+    public void testDefaultMountain() {
+        final MountainPhoto photo = (MountainPhoto) photoFactory.createPhoto();
+        assertNotNull(photo);
+        assertNotNull(photo.getMountain());
+        assertTrue(MountainManager.instance.getAllMountainType().containsKey("volcanic"));
+    }
+
+    @Test
+    public void testSetMountain() {
+        final String typeName = "plateau";
+        this.photoFactory.setType(typeName);
+        final MountainPhoto photo = (MountainPhoto) photoFactory.createPhoto();
+        assertNotNull(photo);
+        assertNotNull(photo.getMountain());
+        assertTrue(MountainManager.instance.getAllMountainType().containsKey(typeName));
     }
 
 }
