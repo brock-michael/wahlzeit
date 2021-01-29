@@ -6,6 +6,22 @@ import org.wahlzeit.utils.PatternInstance;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Method Calls:
+ * - ObjectManager calls createObject() with a ResultSet in MountainPhotoManager.
+ * - MountainPhotoManager calls createPhoto() with a ResultSet in MountainPhotoFactory
+ * - Alternative: PhotoUtil calls createPhoto with a PhotoId in MountainPhotoFactory
+ * - MountainPhotoFactory creates new Instance of MountainPhoto with a prior specified Mountain-Object and
+ * the ResultSet or alternative the PhotoId
+ *
+ * Object Creation Table:
+ * 1. Delegation: seperate-object (MountainPhotoFactory)
+ * 2. Selection: by-subclassing (From class Photo)
+ * 3. Configuration: in-code (no config files or annotations used)
+ * 4. Instantiation: in-code (constructor from MountainPhotoFactory directly called)
+ * 5. Initialization: by-fixed-signature (constructors have fixed parameters)
+ * 6. Building: default (MountainPhoto class creates dependent objects)
+ */
 @PatternInstance(
         patternName = "Abstract Factory",
         participants = {"ConcreteProduct"}

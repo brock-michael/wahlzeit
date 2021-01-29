@@ -8,6 +8,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+/**
+ * Method Calls:
+ * - MountainPhotoFactory calls createMountain() with Typename in MountainManager
+ * - MountainManager calls createInstance() on the corresponding Typename
+ * - MountainType creates new Instance of Mountain with Typename over constructor
+ *
+ * Object Creation Table:
+ * 1. Delegation: seperate-object (MountainType)
+ * 2. Selection: on-the-spot (In this class via constructor)
+ * 3. Configuration: in-code (no config files or annotations used)
+ * 4. Instantiation: in-code (constructor from MountainType directly called)
+ * 5. Initialization: by-fixed-signature (MountainType as fixed parameter in constructor)
+ * 6. Building: default (Mountain class creates dependent objects)
+ */
 public class Mountain extends DataObject {
     private static final String LABEL_MOUNTAIN_HEIGHT = "mountain_height";
     private static final String LABEL_MOUNTAIN_LOCATION = "mountain_location";
