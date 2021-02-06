@@ -7,6 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * MountainPhoto/Mountain Collaboration:
+ * - MountainPhoto binds role Client
+ * - Mountain binds role Service
+ */
+
+/**
  * Method Calls:
  * - ObjectManager calls createObject() with a ResultSet in MountainPhotoManager.
  * - MountainPhotoManager calls createPhoto() with a ResultSet in MountainPhotoFactory

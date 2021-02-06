@@ -9,6 +9,12 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 /**
+ * Mountain/MountainType Collaboration:
+ * - Mountain binds role Base Object
+ * - MountainType binds role Type Object
+ */
+
+/**
  * Method Calls:
  * - MountainPhotoFactory calls createMountain() with Typename in MountainManager
  * - MountainManager calls createInstance() on the corresponding Typename

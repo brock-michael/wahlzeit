@@ -8,6 +8,13 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * MountainManager/Mountain Collaboration:
+ * - MountainManager binds role Manager
+ * - Mountain binds role Element
+ * - MountainPhotoFactory binds role Client
+ */
+
 public class MountainManager extends ObjectManager {
 
     public static final MountainManager instance = new MountainManager();
